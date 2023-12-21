@@ -1,4 +1,7 @@
 {
+
+  "license" : "MIT",
+  "author" : "Ravi",
   "scripts": {
     "start": "node index.js"
   },
