@@ -1,16 +1,22 @@
 const express = require('express');
 const app = express();
 const cors = require('cors'); // Import cors module
-
+const cookieParser = require('cookie-parser');
 require("dotenv").config();
-
 app.use(express.json());
-app.use(cors()); // Use cors middleware
+app.use(cors(
+    {origin: 'http://localhost:5173', 
+    credentials: true,}
+));
+app.use(cookieParser());
 
-const task = require("./Routes/task");
-
+const user = require("./Routes/user");
+const addevents = require("./Routes/event");
+const addmeetings = require("./Routes/meeting");
 console.log("index call");
-app.use("/ravi/v1", task);
+app.use("/ravi/v1/users", user);
+app.use("/ravi/v1", addevents);
+app.use("/ravi/v1", addmeetings);
 
 const PORT = process.env.PORT || 4000;
 
