@@ -3,8 +3,8 @@
   "main": "index.js",
   "author": "Ravi",
   "scripts": {
-    "dev": "nodemon -r dotenv/config ./index.js",
-    "start": "node -r dotenv/config ./index.js",
+    "dev": "nodemon -r ./index.js",
+    "start": "node -r ./index.js",
     "build": "echo 'No build step necessary'"
   },
   "dependencies": {
