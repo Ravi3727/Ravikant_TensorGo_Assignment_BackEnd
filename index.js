@@ -14,6 +14,9 @@ const user = require("./Routes/user");
 const addevents = require("./Routes/event");
 const addmeetings = require("./Routes/meeting");
 console.log("index call");
+app.get("/", function(req, res) {
+    res.send("Hello World");
+});
 app.use("/ravi/v1/users", user);
 app.use("/ravi/v1", addevents);
 app.use("/ravi/v1", addmeetings);
