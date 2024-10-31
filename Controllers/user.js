@@ -149,35 +149,26 @@ exports.loginUser = asyncHandler(async (req, res) => {
 })
 
 exports.logoutUser = asyncHandler(async (req, res) => {
-    //First we have to clear their "cokkkies" and jo humne user ke model me "refrehToken" bheja h usee bhi clear krna hoga 
+    try {
+        res.cookie("accessToken", "", {
+            httpOnly: true,
+            sameSite: 'Lax',
+            expires: new Date(0)
+        });
 
-    //But yahan hamare pass user to hi nahi to usee mongoose se find kese kare Or logout karana ke liye email to enter karayege nahi user se
+        res.cookie("refreshToken", "", {
+            httpOnly: true,
+            sameSite: 'Lax',
+            expires: new Date(0)
+        });
 
-    // Soo we use a MIDDELWAER(JANE SE PEHLE MILKE JANA)
-    // const { id } = req.body;
-    // console.log("logout se : ",req.cookies);
-    await User.findByIdAndUpdate(
-
-        req.user._id,
-        {
-            //ye ek object leta h unn chizo ka jo update krni h
-            $unset: {
-                refreshToken: undefined,
-            }
-        },
-        {
-            //joo return me response milega usme hume new updated value milegi 
-            new: true
-        }
-    )
-    const options = {
-        httpOnly: true,
-        secure: true
+        return res.status(200).json(new ApiResponse(200, {}, "User logged out successfully"));
+    } catch (error) {
+        throw new ApiError(500, error?.message || "Failed to log out user");
     }
+});
 
 
-    return res.status(200).clearCookie("accessToken", options).clearCookie("refreshToken", options).json(new ApiResponse(200, {}, "User loggedOut successfully"))
-})
 
 exports.getUser  = asyncHandler(async (req, res) => {
     const {userId} = req.body;

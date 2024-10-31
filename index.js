@@ -4,10 +4,11 @@ const cors = require('cors'); // Import cors module
 const cookieParser = require('cookie-parser');
 require("dotenv").config();
 app.use(express.json());
-app.use(cors(
-    {origin: 'http://localhost:5173', 
-    credentials: true,}
-));
+app.use(cors({
+    origin: 'https://experimentlab.vercel.app', // Replace with your frontend origin
+    credentials: true, // Allow cookies to be sent
+}));
+
 app.use(cookieParser());
 
 const user = require("./Routes/user");
