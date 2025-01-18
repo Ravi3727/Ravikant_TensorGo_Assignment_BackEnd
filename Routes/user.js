@@ -1,16 +1,17 @@
-const Router = require("express");
+const express = require('express');
+const router = express.Router();
 
 const { getUser,registerUser, loginUser, logoutUser, changeCurrentPassword, updateAccountDetails } = require("../Controllers/user.js");
 
 const verifyJWT = require("../middlewares/auth.js");
-const router = Router();
 
-router.route("/").post(getUser)
+
+router.route("/").post( getUser)
 router.route("/register").post(registerUser)
 
 router.route("/login").post(loginUser)
 
-router.route("/logout").post( logoutUser)
+router.route("/logout").post(logoutUser)
 
 // router.route("/tokenRefresh").post(refreshAccessToken)
 

@@ -7,23 +7,30 @@ const jwt = require("jsonwebtoken");
 
 const generateAccessAndRefreshTokens = async (userId) => {
     try {
-        console.log("Generating access and refresh tokens", userId);
-        const user = await User.findById(userId)
-        console.log("Generating access and refresh tokens", user);
-        const accessToken = user.generateAccessToken()
-        const refreshToken = user.generateRefreshToken()
+        console.log("Generating access and refresh tokens for user:", userId);
+        const user = await User.findById(userId);
 
-        user.refreshToken = refreshToken
+        if (!user) {
+            throw new ApiError(404, "User not found");
+        }
 
-        // Abb jab bhi hum save function call krte h ye User models ke sare feilds ko validate krta h but humne to token ke alava kuch nahi bheja to so ve pass a another statement 
-        await user.save({ validateBeforeSave: false })
+        console.log("User found for token generation:", user);
 
-        return { accessToken, refreshToken }
+        const accessToken = user.generateAccessToken();
+        const refreshToken = user.generateRefreshToken();
 
+        console.log("Generated tokens:", { accessToken, refreshToken });
+
+        user.refreshToken = refreshToken;
+        await user.save({ validateBeforeSave: false });
+
+        return { accessToken, refreshToken };
     } catch (e) {
-        throw new ApiError(500, "Token generation failed")
+        console.error("Error generating tokens:", e);
+        throw new ApiError(500, "Token generation failed");
     }
-}
+};
+
 
 exports.registerUser = asyncHandler(async (req, res) => {
     //Get user Details from frontend
@@ -37,7 +44,7 @@ exports.registerUser = asyncHandler(async (req, res) => {
     //check for user creation
     //return response 
 
-    const { fullName, username, password, email } = req.body;
+    const { fullName, username, password, email, isAdmin,isSuperAdmin } = req.body;
     if (
         [fullName, email, username, password].some((field) => field?.trim() === "")
     ) {
@@ -57,9 +64,11 @@ exports.registerUser = asyncHandler(async (req, res) => {
         email,
         password,
         username: username,
-        events: [],
-        meetings: [],
+        isAdmin: isAdmin,
+        isSuperAdmin: isSuperAdmin
     })
+
+    console.log("User Created", user);
 
     const createdUser = await User.findById(user._id).select(
         "-password  -refreshToken "
@@ -89,7 +98,7 @@ exports.loginUser = asyncHandler(async (req, res) => {
     //send cokkie
 
     try {
-        const { email, password, username } = req.body;
+        const { email, password, username, isSuperAdmin} = req.body;
 
         if (!username && !email) {
             throw new ApiError(400, "Username or Email is required")
@@ -100,10 +109,11 @@ exports.loginUser = asyncHandler(async (req, res) => {
             $or: [{ email }]
         })
 
-
-
         if (!user) {
             throw new ApiError(400, "User does not exist")
+        }
+        if(user.isSuperAdmin === false && isSuperAdmin === true){
+            throw new ApiError(401, "You are not authorized to login as Super Admin")
         }
 
         //"User" mongoDB ka object h or user hamara local object h so we use this because isPasswordCorrect hamne define kiya h or is user ke liye define h iske liye nahi "User"
@@ -152,13 +162,11 @@ exports.logoutUser = asyncHandler(async (req, res) => {
     try {
         res.cookie("accessToken", "", {
             httpOnly: true,
-            sameSite: 'Lax',
             expires: new Date(0)
         });
 
         res.cookie("refreshToken", "", {
             httpOnly: true,
-            sameSite: 'Lax',
             expires: new Date(0)
         });
 
@@ -173,8 +181,15 @@ exports.logoutUser = asyncHandler(async (req, res) => {
 exports.getUser  = asyncHandler(async (req, res) => {
     const {userId} = req.body;
     const user = await User.findById(userId);
+    console.log("User is here" + user);
     return res.status(200).json(new ApiResponse(200, user, "User fetched successfully"))
 })
+
+
+
+
+
+
 
 // exports.changeCurrentPassword = asyncHandler(async (req, res) => {
 //     const { newPassword, confirmPassword, userId } = req.body;

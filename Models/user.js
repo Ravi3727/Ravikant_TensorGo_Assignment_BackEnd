@@ -19,6 +19,14 @@ const userSchema = new Schema({
         type: String,
         required: [true, 'Password is required'],
     },
+    isAdmin: {
+        type: Boolean,
+        default: false
+    },
+    isSuperAdmin: {
+        type: Boolean,
+        default: false
+    },
     events: [{
         type: {
             title: {
@@ -76,13 +84,16 @@ userSchema.methods.isPasswordCorrect = async function (password) {
 
 
 userSchema.methods.generateAccessToken = function () {
+    console.log("ACCESS_TOKEN_SCERET ye raha ",process.env.ACCESS_TOKEN_SCERET)
+
+    // console.log("Loaded Environment Variables:", process.env);
     return jwt.sign({
         _id: this._id,
         email: this.email,
         username: this.username,
         fullName: this.fullName,
     },
-        process.env.ACCESS_TOKEN_SCERET,
+        process.env.ACCESS_TOKEN_SECRET,
         {
             expiresIn: process.env.ACCESS_TOKEN_EXPIRE
         }
@@ -93,7 +104,7 @@ userSchema.methods.generateRefreshToken = function () {
     return jwt.sign({
         _id: this._id,
     },
-        process.env.REFRESH_TOKEN_SCERET,
+        process.env.REFRESH_TOKEN_SECRET,
         {
             expiresIn: process.env.REFRESH_TOKEN_EXPIRE
         }

@@ -32,7 +32,7 @@ const verifyJWT = asyncHandler(async (req, res, next) => {
         }
 
 
-        //Abb agar confirm ho agay ah ki user aa gaya h to we add a new object to response "res"
+        //Abb agar confirm ho agay h ki user aa gaya h to we add a new object to response "res"
 
         req.user = user;
         next();//next middleware pe chale jao ya aage baad jaoo
