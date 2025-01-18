@@ -2,6 +2,7 @@ const PlanAssignment = require('../Models/planAssignment');
 const Organization = require('../Models/organization');
 const Plan = require('../Models/plans');
 const User = require('../Models/user');
+const mongoose = require("mongoose");
 
 exports.createAssignment = async (req, res) => {
     try {
@@ -77,3 +78,38 @@ exports.removeUserFromPlan = async (req, res) => {
         res.status(500).json({ message: 'Internal server error' });
     }
 };
+
+exports.getUserPlanByUserId = async (req, res) => {
+    try {
+        const {userId} = req.params;
+        // console.log(req);
+        console.log(userId);
+        if (!mongoose.Types.ObjectId.isValid(userId)) {
+            return res.status(400).json({ message: "Invalid user ID format" });
+        }
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        const assignments = await PlanAssignment.find({ user: userId })
+            .populate('organization', 'name')
+            .populate('plan', 'name description price duration maxUsers');
+
+        if (!assignments.length) {
+            return res.status(404).json({ message: "No plans or organizations found for this user" });
+        }
+
+        const result = assignments.map((assignment) => ({
+            organization: assignment.organization,
+            plan: assignment.plan,
+        }));
+
+        res.status(200).json({ user: user.username, assignments: result });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Internal server error" });
+    }
+};
+
+
