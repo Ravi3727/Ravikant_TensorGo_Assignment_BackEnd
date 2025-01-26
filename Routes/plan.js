@@ -6,9 +6,7 @@ const {createPlan, deletePlan,updatePlan,getPlans } = require("../Controllers/pl
 
 router.post("/plan", createPlan);
 router.get("/plan", getPlans);
-
 router.delete("/plan/:id", deletePlan);
-
 router.patch("/plan/:id", updatePlan);
 
 module.exports = router;

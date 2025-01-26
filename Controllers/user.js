@@ -177,72 +177,9 @@ exports.logoutUser = asyncHandler(async (req, res) => {
 });
 
 
-
 exports.getUser  = asyncHandler(async (req, res) => {
     const {userId} = req.body;
     const user = await User.findById(userId);
     console.log("User is here" + user);
     return res.status(200).json(new ApiResponse(200, user, "User fetched successfully"))
 })
-
-
-
-
-
-
-
-// exports.changeCurrentPassword = asyncHandler(async (req, res) => {
-//     const { newPassword, confirmPassword, userId } = req.body;
-
-//     //password change kr raha h => loggedIn h  => auth middleware chala h => to request me user h 
-//     if (confirmPassword !== newPassword) {
-
-//         return res.status(404).json(
-//             new ApiResponse(404, {}, "Password mismatch")
-//         )
-
-//     }
-
-//     const user = await User.findById(userId)
-
-//     //abb User model me mene ispasswordCorrect method banaya tha to we use that vo async tha isiliye await
-//     // const isPasswordCorrect = await user.isPasswordCorrect(oldPassword, newPassword)
-
-//     // if (!isPasswordCorrect) {
-//     //     throw new ApiError(400, "Old Password incorrect")
-//     // }
-
-//     //set new password
-//     user.password = newPassword
-//     await user.save({ validateBeforeSave: false })
-
-//     return res.status(200).json(new ApiResponse(200, {}, "Password Changed Successfully"))
-// })
-
-//Text feilds updation
-// exports.updateAccountDetails = asyncHandler(async (req, res) => {
-
-//     //files update ke liye new controller design karo jisee photos change krte vakt faltu me text update na ho
-//     const { fullName, email, userId } = req.body
-
-//     if (!fullName || !email) {
-
-//         return res.status(404).json(
-//             new ApiResponse(404, {}, "All fields are required")
-//         )
-//     }
-
-//     const updatedUser = await User.findByIdAndUpdate(
-//         userId,
-//         {
-//             $set: {
-//                 fullName,
-//                 email: email
-//             }
-//         },
-//         { new: true }
-
-//     ).select("-password")
-
-//     return res.status(200).json(new ApiResponse(200, updatedUser, "Account details Updated Successfully"));
-// });

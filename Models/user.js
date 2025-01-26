@@ -27,46 +27,6 @@ const userSchema = new Schema({
         type: Boolean,
         default: false
     },
-    events: [{
-        type: {
-            title: {
-                type: 'string',
-                
-            },
-            description: {
-                type: 'string',
-               
-            },
-            dated: {
-                type: 'string',
-                
-            },
-            time: {
-                type: 'string',
-                
-            }
-        }
-    }],
-    meetings: [{
-        type: {
-            title: {
-                type: 'string',
-                
-            },
-            description: {
-                type: 'string',
-                
-            },
-            dated: {
-                type: 'string',
-                
-            },
-            time: {
-                type: 'string',
-                
-            }
-        }
-    }],
     refreshToken: {
         type: String,
     }
