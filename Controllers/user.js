@@ -2,7 +2,6 @@ const asyncHandler = require("../Api/asyncHandler.js");
 const ApiError = require("../Api/ApiError.js");
 const User = require("../Models/user");
 const ApiResponse = require("../Api/ApiResponse.js");
-const jwt = require("jsonwebtoken");
 
 
 const generateAccessAndRefreshTokens = async (userId) => {
@@ -123,8 +122,6 @@ exports.loginUser = asyncHandler(async (req, res) => {
             throw new ApiError(401, "Invalid password")
         }
 
-        //Access ans Refresh token kaii baar banae hote h isiliye we make a seperate method fot this 
-
         const { accessToken, refreshToken } = await generateAccessAndRefreshTokens(user._id)
 
         // localStorage.setItem(accessToken, accessToken);
@@ -134,11 +131,10 @@ exports.loginUser = asyncHandler(async (req, res) => {
         // req.loggedInUser = loggedInUser._id;
         // console.log("loggedInUser "+ loggedInUser);
 
-        
-
+    
         const options = {
             httpOnly: true,
-            secure: true, // Set to true only in production
+            secure: true,
             sameSite: 'None',
         };
 
@@ -180,6 +176,6 @@ exports.logoutUser = asyncHandler(async (req, res) => {
 exports.getUser  = asyncHandler(async (req, res) => {
     const {userId} = req.body;
     const user = await User.findById(userId);
-    console.log("User is here" + user);
+    // console.log("User is here" + user);
     return res.status(200).json(new ApiResponse(200, user, "User fetched successfully"))
 })

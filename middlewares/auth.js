@@ -5,8 +5,8 @@ const User = require("../Models/user");
 const verifyJWT = asyncHandler(async (req, res, next) => {
     try {
         console.log("auth middleware",req.body)
-        const {Token1} = req.body;
-        const Token = Token1 || req.header("Authorization")?.replace("Bearer", "")
+        // const {Token1} = req.body;
+        const Token = req.cookies?.accessToken || req.header("Authorization")?.replace("Bearer ", "").trim();
         console.log(Token);
         if (!Token) {
             return res.status(401).json({
@@ -14,7 +14,8 @@ const verifyJWT = asyncHandler(async (req, res, next) => {
                 message: "Unauthorized"
             })
         }
-        const decodedToken = jwt.verify(Token, process.env.ACCESS_TOKEN_SCERET)
+        // const decodedToken = jwt.verify(Token, process.env.ACCESS_TOKEN_SCERET)
+        const decodedToken = jwt.verify(Token, "ravikant12345")
 
         const user = await User.findById(decodedToken?._id).select("-password -refreshToken")
 
